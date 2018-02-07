@@ -1,0 +1,24 @@
+{
+  "name": "com.broadlink.rm",
+  "version": "1.0.0",
+  "description": "Broadlink RM plugin for Homey",
+  "main": "app.js",
+  "scripts": {
+    "start": "athom project --run",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "broadlink",
+    "rm",
+    "homey",
+    "plugin"
+  ],
+  "author": "Anton Petrov <petrov.aap@gmail.com> (http://github.com/itsmepetrov)",
+  "license": "MIT",
+  "dependencies": {
+    "athom-api": "^1.0.9",
+    "broadlinkjs-rm": "github:itsmepetrov/broadlinkjs-rm",
+    "lodash.omit": "^4.5.0",
+    "nanoid": "^1.0.1"
+  }
+}

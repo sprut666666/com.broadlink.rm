@@ -1,0 +1,64 @@
+{
+  "id": "com.broadlink.rm",
+  "sdk": 2,
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "name": {
+    "en": "Broadlink RM",
+    "nl": "Broadlink RM"
+  },
+  "description": {
+    "en": "Broadlink RM support for Homey",
+    "nl": "Broadlink RM ondersteuning voor Homey"
+  },
+  "tags": {
+    "en": ["broadlink", "rm"],
+    "nl": ["broadlink", "rm"]
+  },
+  "category": "appliances",
+  "version": "1.0.0",
+  "compatibility": ">=1.5.0",
+  "author": {
+    "name": "Anton Petrov",
+    "email": "petrov.aap@gmail.com"
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Anton Petrov",
+        "email": "petrov.aap@gmail.com"
+      }
+    ]
+  },
+  "images": {
+    "large": "./assets/images/large.png",
+    "small": "./assets/images/small.png"
+  },
+  "drivers": [
+    {
+      "id": "button",
+      "name": {
+        "en": "Button",
+        "nl": "Button"
+      },
+      "images": {
+        "large": "./drivers/button/assets/images/large.png",
+        "small": "./drivers/button/assets/images/small.png"
+      },
+      "class": "button",
+      "capabilities": [],
+      "pair": [
+        {
+          "id": "devices"
+        },
+        {
+          "id": "config"
+        },
+        {
+          "id": "learn"
+        }
+    ]
+    }
+  ]
+}

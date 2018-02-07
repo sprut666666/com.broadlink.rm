@@ -1,0 +1,35 @@
+{
+  "pair": {
+    "authorization": "Authenticate with Zont",
+    "authorization_explanation": "Please go to settings and give Homey access to your Zont devices.",
+    "no_devices_found": "No devices found."
+  },
+  "learn": {
+    "step0": "Hold down the button that sends the RF frequency",
+    "step1": "Keep holding that button!",
+    "step2": "Press the RF button multiple times with a pause between them",
+    "result": "Hex Code scanned successfully",
+    "timeout": "Learning timeout"
+  },
+  "buttons": {
+    "add": "Add",
+    "next": "Next",
+    "done": "Done",
+    "back": "Back",
+    "again": "Try again"
+  },
+  "settings": {
+    "title": "Broadlink RM Settings",
+    "intro": "Controll your Broadlink RM devices",
+    "devices_list": "Devices list",
+    "devices_list_info": "Available devices (refreshes every 3 seconds)",
+    "auth": {
+      "header": "Broadlink RM Authentication Credentials",
+      "username": "Username",
+      "password": "Password",
+      "authenticate": "Authenticate",
+      "revoke": "Revoke Authentication",
+      "error": "Invalid credentials"
+    }
+  }
+}
