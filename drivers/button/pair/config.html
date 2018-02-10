@@ -85,7 +85,8 @@
   }
 
   function handleTestButton() {
-    const value = $(this).closest('.item').find('input').val()
+    const item = $(this).closest('.item')
+    const value = item.find('.command').val()
     if (value) {
       Homey.emit('test', { hex: value })
     }

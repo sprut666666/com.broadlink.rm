@@ -15,9 +15,9 @@
   let buttonMoveInterval = null
   // Stages config
   const stages = {
-    'step-0': { text: t('learn.step0'), next: handleLeranongStep0 },
-    'step-1': { text: t('learn.step1'), next: handleLeranongStep1 },
-    'step-2': { text: t('learn.step2'), next: handleLeranongStep2 },
+    'start': { text: t('learn.start'), next: handleLearnongStart },
+    'step-1': { text: t('learn.step1'), next: handleLearnongStep1 },
+    'step-2': { text: t('learn.step2'), next: handleLearnongStep2 },
     'result': { text: t('learn.result'), next: handleLearningResult },
     'timeout': { text: t('learn.timeout'), next: handleLearningTimeout }
   }
@@ -29,17 +29,17 @@
     callback()
   }
 
-  function handleLeranongStep0() {
+  function handleLearnongStart() {
     setProgress(10)
     setButtonMoveInterval(4000, 'hold')
   }
 
-  function handleLeranongStep1() {
+  function handleLearnongStep1() {
     setProgress(30)
     setButtonMoveInterval(4000, 'hold')
   }
 
-  function handleLeranongStep2() {
+  function handleLearnongStep2() {
     setProgress(60)
     setButtonMoveInterval(400, 'push')
   }
@@ -47,8 +47,8 @@
   function handleLearningResult(data) {
     setProgress(100)
     clearInterval(buttonMoveInterval)
-    setTimeout(() => Homey.prevView(), 1500)
     Homey.emit('learn:result', { hex: data })
+    setTimeout(() => Homey.prevView(), 1500)
   }
 
   function handleLearningTimeout() {
@@ -241,7 +241,7 @@
       </g>
   </svg>
 
-  <p class="info" data-i18n="learn.step0"></p>
+  <p class="info" data-i18n="learn.start"></p>
 
   <div class="progress">
     <div class="progress-bar"></div>

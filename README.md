@@ -2,7 +2,7 @@
 Connect your devices via Broadlink RM products with Homey.
 
 ## Currently supports:
-* Only radio frequency learning
+* RF and IR devices
 
 ## Licensing:
 * This application is subject to [these terms](./LICENSE).

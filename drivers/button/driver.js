@@ -91,6 +91,7 @@ class SwitchDriver extends Homey.Driver {
       ...this.capabilities[this.currentId],
       command: data.hex
     }
+    callback()
   }
 
   handleLearnProgress({ stage, data }) {
@@ -162,7 +163,6 @@ class SwitchDriver extends Homey.Driver {
       capabilitiesOptions,
       mobile: { components }
     }
-    console.log(device)
     callback(null, device)
   }
 }

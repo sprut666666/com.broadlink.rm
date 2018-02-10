@@ -23,7 +23,6 @@ class ButtonDevice extends Homey.Device {
   handleCapabilityTrigger(capability) {
     const deviceId = this.data.deviceId
     const command = this.data.commands[capability]
-    console.log({ deviceId, capability, command })
     Homey.app.brm.sendCommand(deviceId, command)
     return Promise.resolve()
   }

@@ -5,7 +5,7 @@
     "no_devices_found": "No devices found."
   },
   "learn": {
-    "step0": "Hold down the button that sends the RF frequency",
+    "start": "Hold down the button that sends the RF frequency or click IR button",
     "step1": "Keep holding that button!",
     "step2": "Press the RF button multiple times with a pause between them",
     "result": "Hex Code scanned successfully",
