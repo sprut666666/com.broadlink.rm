@@ -9,7 +9,9 @@
     "step1": "Keep holding that button!",
     "step2": "Press the RF button multiple times with a pause between them",
     "result": "Hex Code scanned successfully",
-    "timeout": "Learning timeout"
+    "timeout": "Learning timeout",
+    "type_learn": "Plain learning",
+    "type_learn_rfs": "Sweep frequency"
   },
   "buttons": {
     "add": "Add",

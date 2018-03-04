@@ -1,25 +1,40 @@
 <script type="text/javascript">
   // Update page title
   Homey.setTitle('Learn command')
-  // Start learning
-  Homey.emit('learn:start')
+  // Get current device
+  Homey.emit('devices:current', {}, handleCurrentDevice)
   // Listen for learning progress
   Homey.on('learn:progress', handleLearningProgress)
   // Handle try again button click
   $('.button.again').on('click', handleTryAgainButton)
   // Handle back button click
   $('.button.left').on('click', handleBackButton)
+  // Handle learning mode change
+  $('.switch input').change(handleLearningModeChange) 
   // Set translate shortcut
   const t = Homey.__
   // Button move interval id
   let buttonMoveInterval = null
+  // Learning type
+  let learningType = 'learn'
   // Stages config
   const stages = {
-    'start': { text: t('learn.start'), next: handleLearnongStart },
-    'step-1': { text: t('learn.step1'), next: handleLearnongStep1 },
-    'step-2': { text: t('learn.step2'), next: handleLearnongStep2 },
+    'start': { text: t('learn.start'), next: handleLearningStart },
+    'step-1': { text: t('learn.step1'), next: handleLearningStep1 },
+    'step-2': { text: t('learn.step2'), next: handleLearningStep2 },
     'result': { text: t('learn.result'), next: handleLearningResult },
     'timeout': { text: t('learn.timeout'), next: handleLearningTimeout }
+  }
+
+  function handleCurrentDevice(err, { device }) {
+    if (device.learn && device.learn_rfs) {
+      $('.learning-holder').show()
+      Homey.emit('learn:start', { type: learningType })
+    } else if (device.learn) {
+      Homey.emit('learn:start', { type: learningType })
+    } else {
+      console.log('Device does\'t support learning')
+    }
   }
 
   function handleLearningProgress({ stage, data }, callback) {
@@ -29,17 +44,17 @@
     callback()
   }
 
-  function handleLearnongStart() {
+  function handleLearningStart() {
     setProgress(10)
     setButtonMoveInterval(4000, 'hold')
   }
 
-  function handleLearnongStep1() {
+  function handleLearningStep1() {
     setProgress(30)
     setButtonMoveInterval(4000, 'hold')
   }
 
-  function handleLearnongStep2() {
+  function handleLearningStep2() {
     setProgress(60)
     setButtonMoveInterval(400, 'push')
   }
@@ -59,14 +74,20 @@
 
   function handleTryAgainButton() {
     $('.button.again').css('visibility', 'hidden')
-    Homey.emit('learn:start')
+    Homey.emit('learn:start', { type: learningType })
   }
 
   function handleBackButton() {
     clearInterval(buttonMoveInterval)
-    Homey.emit('learn:stop', () => {
+    Homey.emit('learn:stop', { type: learningType }, () => {
       Homey.prevView()
     })
+  }
+
+  function handleLearningModeChange() {
+    Homey.emit('learn:stop', { type: learningType })
+    learningType = $(this).prop('checked') ? 'learn_rfs' : 'learn'
+    Homey.emit('learn:start', { type: learningType })
   }
 
   function toggleIconAnimation(type) {
@@ -139,6 +160,76 @@
     background-color: rgb(138, 117, 240);
     transition: 0.4s linear;
     transition-property: width;
+  }
+
+  .content .learning-mode {
+    height: 20px;
+    margin-bottom: 30px;
+  }
+
+  .content .learning-mode .learning-holder {
+    display: none;
+  }
+
+  .content .learning-mode .learning-switch {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .content .learning-mode .learning-switch .type  {
+    width: 150px;
+  }
+
+  .content .learning-mode .learning-switch .type.end {
+    text-align: end;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 35px;
+    height: 20px;
+    margin: 0 10px;
+  }
+
+  .switch input {
+    display: none;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    background-color: #6ddc5f;
+    transition: .4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 4px;
+    bottom: 4px;
+    border-radius: 50%;
+    background-color: white;
+    transition: .4s;
+  }
+
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(15px);
   }
 
   @keyframes hold {
@@ -240,6 +331,19 @@
           <path d="M173.33,1350.34c0.03-0.49,0.08-1.35,0.16-2.72C173.52,1346.98,173.39,1349.25,173.33,1350.34z"></path>
       </g>
   </svg>
+
+  <div class="learning-mode">
+    <div class="learning-holder">
+      <div class="learning-switch">
+        <span class="type end" data-i18n="learn.type_learn"></span>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+        <span class="type" data-i18n="learn.type_learn_rfs"></span>
+      </div>
+    </div>
+  </div>
 
   <p class="info" data-i18n="learn.start"></p>
 

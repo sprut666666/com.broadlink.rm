@@ -1,7 +1,7 @@
 const Homey = require('homey')
 const omit = require('lodash.omit')
 const uuid = require('../../lib/uuid')
-const parseDevices = require('../../lib/parseDevices')
+const parseDevice = require('../../lib/parseDevice')
 
 class SwitchDriver extends Homey.Driver {
   onPair(socket) {
@@ -11,6 +11,7 @@ class SwitchDriver extends Homey.Driver {
     this.capabilities = this.createInitialCapabilities()
     socket.on('devices', this.handleDevices.bind(this))
     socket.on('devices:select', this.handleSelectDevice.bind(this))
+    socket.on('devices:current', this.handleCurrentDevice.bind(this))
     socket.on('state', this.handleState.bind(this))
     socket.on('test', this.handleTestCommand.bind(this))
     socket.on('capability:add', this.handleAddCapability.bind(this))
@@ -56,7 +57,7 @@ class SwitchDriver extends Homey.Driver {
   handleDevices(data, callback) {
     callback(null, {
       currentId: this.deviceId,
-      devices: parseDevices(Homey.app.brm.getDevices())
+      devices: Homey.app.brm.getDevices().map(parseDevice)
     })
   }
 
@@ -65,20 +66,40 @@ class SwitchDriver extends Homey.Driver {
     callback()
   }
 
+  handleCurrentDevice(data, callback) {
+    callback(null, {
+      device: parseDevice(Homey.app.brm.getDevice(this.deviceId))
+    })
+  }
+
   handleState(data, callback) {
     callback(null, {
       capabilities: Object.values(this.capabilities)
-    });
+    })
   }
 
   handleLearnStart(data, callback) {
-    Homey.app.brm.startRFLearning(this.deviceId, this.handleLearnProgress.bind(this))
-    callback()
+    if (data.type === 'learn') {
+      Homey.app.brm.startLearning(this.deviceId, this.handleLearnProgress.bind(this))
+      callback()
+    } else if (data.type === 'learn_rfs') {
+      Homey.app.brm.startRFSLearning(this.deviceId, this.handleLearnProgress.bind(this))
+      callback()
+    } else {
+      callback(`Unknown learning type: ${data.type}`)
+    }
   }
 
   handleLearnStop(data, callback) {
-    Homey.app.brm.stopRFLearning(this.deviceId)
-    callback()
+    if (data.type === 'learn') {
+      Homey.app.brm.stopLearning(this.deviceId)
+      callback()
+    } else if (data.type === 'learn_rfs') {
+      Homey.app.brm.stopRFSLearning(this.deviceId)
+      callback()
+    } else {
+      callback(`Unknown learning type: ${data.type}`)
+    }
   }
 
   handleTestCommand(data, callback) {

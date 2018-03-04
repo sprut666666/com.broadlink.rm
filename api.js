@@ -1,5 +1,5 @@
 const Homey = require('homey')
-const parseDevices = require('./lib/parseDevices')
+const parseDevice = require('./lib/parseDevice')
 
 module.exports = [{
   method: 'GET',
@@ -7,7 +7,7 @@ module.exports = [{
   fn(args, callback) {
     Homey.app.brm.discover()
     const devices = Homey.app.brm.getDevices()
-    const data = parseDevices(devices)
+    const data = devices.map(parseDevice)
     callback(null, data)
   }
 }, {

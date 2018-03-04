@@ -4,7 +4,7 @@
   "description": "Broadlink RM plugin for Homey",
   "main": "app.js",
   "scripts": {
-    "start": "athom project --run",
+    "start": "athom app run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
