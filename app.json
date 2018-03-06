@@ -58,7 +58,33 @@
         {
           "id": "learn"
         }
-    ]
+      ]
+    },
+    {
+      "id": "curtains",
+      "name": {
+        "en": "Curtains",
+        "nl": "Curtains"
+      },
+      "images": {
+        "large": "./drivers/curtains/assets/images/large.png",
+        "small": "./drivers/curtains/assets/images/small.png"
+      },
+      "class": "windowcoverings",
+      "capabilities": [
+        "windowcoverings_state"
+      ],
+      "pair": [
+        {
+          "id": "devices"
+        },
+        {
+          "id": "config"
+        },
+        {
+          "id": "learn"
+        }
+      ]
     }
   ]
 }

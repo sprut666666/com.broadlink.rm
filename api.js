@@ -10,18 +10,4 @@ module.exports = [{
     const data = devices.map(parseDevice)
     callback(null, data)
   }
-}, {
-  method: 'POST',
-  path: '/devices/:id/learn/start',
-  fn(args, callback) {
-    Homey.app.brm.startRFLearning(args.params.id)
-    callback(null)
-  }
-}, {
-  method: 'POST',
-  path: '/devices/:id/learn/stop',
-  fn(args, callback) {
-    Homey.app.brm.stopRFLearning(args.params.id)
-    callback(null)
-  }
 }]

@@ -55,10 +55,6 @@ class Devices extends React.Component {
     }
   }
 
-  async handleScan(id) {
-    await request('POST', `/devices/${id}/learn/start`)
-  }
-
   render() {
     return (
       <ul className="devices">
@@ -79,11 +75,6 @@ class Devices extends React.Component {
                 {device.host.macAddress}
               </span>
             </div>
-            <button
-              className="scan"
-              onClick={() => this.handleScan(device.id)}>
-              Scan
-            </button>
           </li>
         ))}
       </ul>
