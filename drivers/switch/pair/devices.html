@@ -1,0 +1,183 @@
+<script type="text/javascript">
+  // Update page title
+  Homey.setTitle('Specify Broadlink RM device')
+  // Get available devices
+  Homey.emit('devices', {}, handleDevicesList)
+  // Handle next button click
+  $('#device_list').on('click', '.item', handleDeviceSelect)
+  // Handle next button click
+  $('.nav_button.next').on('click', handleNextButton)
+  
+  function handleDevicesList(err, data) {
+    renderDevices(data.devices)
+    if (data.currentId) {
+      selectDevice(data.currentId)
+    } else if (data.devices.length) {
+      selectDevice(data.devices[0].id)
+    }
+  }
+
+  function handleDeviceSelect() {
+    $('.selection').prop('checked', false);
+    $(this).find('.selection').prop('checked', true);
+  }
+
+  function handleNextButton() {
+    const id = $('.selection:checked').parent().data('id')
+    Homey.emit('devices:select', { id }, (err, device) => {
+      Homey.showView('config')
+    })
+  }
+
+  function findDevice(id) {
+    return $('.devices .item').filter(function() {
+      return $(this).data('id') === id
+    }).first()
+  }
+
+  function selectDevice(id) {
+    findDevice(id).find('.selection').prop('checked', true);
+  }
+
+  function createDevice(item) {
+    const template = $('#device_item')
+    const content = template.contents().clone()
+    content.data('id', item.id)
+    content.find('.name').text('Broadlink ' + item.type)
+    content.find('.ip').text(item.host.address)
+    content.find('.mac').text(item.host.macAddress)
+    content.find('.icon').attr('src', this.getDeviceIcon(item.type))
+    return content
+  }
+
+  function renderDevices(items) {
+    const elements = items.map(createDevice)
+    const container = $('#device_list')
+    container.append(elements)
+  }
+
+  function getDeviceIcon(type) {
+    switch(type) {
+      case 'RM Mini':
+        return 'icons/rm_mini.jpg'
+      default:
+        return 'icons/rm_pro.jpg'
+    }
+  }
+</script>
+  
+<style>
+  .template {
+    display: none;
+  }
+
+  .devices {
+    position: relative;
+    margin: auto;
+    border: 1px solid #eee;
+    border-radius: 3px;
+  }
+
+  .devices .item {
+    position: relative;
+    height: 45px;
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .devices .item:nth-child(2n-1) {
+    border-bottom: 1px solid #eee;
+  }
+
+  .devices .item .icon {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    bottom: 10px;
+    width: 40px;
+    height: 40px;
+    background: #111;
+  }
+
+  .devices .item .name {
+    position: absolute;
+    left: 70px;
+    right: 15px;
+    top: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 14px;
+  }
+
+  .devices .item .info {
+    position: absolute;
+    left: 70px;
+    top: 32px;
+    right: 15px;
+    color: #666;
+    font-size: 12px;
+    line-height: 14px;
+  }
+
+  .devices .item .info .text {
+    padding: 0 5px;
+    border-right: 1px solid #ddd;
+  }
+
+  .devices .item .info .text:first-child {
+    padding-left: 0px;
+  }
+
+  .devices .item .info .text:last-child {
+    border-right: 0;
+    padding-right: 0;
+  }
+
+  .devices .item .selection {
+    position: absolute;
+    right: 10px;
+    top: 17px;
+  }
+
+  .title {
+    margin-bottom: 10px;
+  }
+
+  .add_button {
+    position: absolute;
+    right: 0;
+    margin-right: 6px;
+    margin-top: 6px;
+    width: 87px;
+  }
+
+  .nav_button {
+    position: absolute;
+    bottom: 0;
+  }
+
+  .nav_button.right {
+    right: 0;
+  }
+</style>
+  
+<div id="device_item" class="template">
+  <div class="item">
+    <img class="icon" />
+    <div class="name">name</div>
+    <div class="info">
+      <span class="text ip">ip</span>
+      <span class="text mac">mac</span>
+    </div>
+    <input class="selection" type="radio">
+  </div>
+</div>
+
+<h2 class="title">Specify device</h2>
+
+<div id="device_list" class="devices"></div>
+
+<button class="nav_button right next">
+  <span data-i18n="buttons.next"></span>
+</button>
+  

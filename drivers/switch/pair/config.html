@@ -1,0 +1,294 @@
+<script type="text/javascript">
+  // Update page title
+  Homey.setTitle('Configure new device')
+  // Get device properties
+  Homey.emit('state', {}, handlePairingState)
+  // Handle back button click
+  $('.nav_button.back').on('click', handleBackButton)
+  // Handle done button click
+  $('.nav_button.done').on('click', handleDoneButton)
+  // Handle item collapse icon click
+  $('#capability_list').on('click', '.collapse', handleCollapseClick)
+  // Handle item name text click
+  $('#capability_list').on('click', '.name', handleNameClick)
+  // Handle item save button click
+  $('#capability_list').on('click', '.save', handleSaveClick)
+  // Handle item test button click
+  $('#capability_list').on('click', '.test', handleTestButton)
+  // Handle item learn button click
+  $('#capability_list').on('click', '.learn', handleLearnButton)
+  // Handle item name change
+  $('#capability_list').on('input', '.edit', handleNameChange)
+  // Handle item command change
+  $('#capability_list').on('input', '.command', handleCommandChange)
+  
+  function handlePairingState(err, data) {
+    renderCapabilities(data.capabilities)
+  }
+
+  function handleNameChange() {
+    const value = $(this).val()
+    $(this).closest('.item').find('.name').text(value)
+  }
+
+  function handleCommandChange() {
+    const item = $(this).closest('.item')
+    const id = item.data('id')
+    const command = $(this).val()
+    if (command) {
+      item.find('.status').addClass('ok')
+    } else {
+      item.find('.status').removeClass('ok')
+    }
+    Homey.emit('capability:update', { id, command })
+  }
+
+  function handleCollapseClick() {
+    const icon = $(this)
+    if (icon.hasClass('open')) {
+      icon.removeClass('open')
+      icon.closest('.item').find('.bottom').hide()
+    } else {
+      icon.addClass('open')
+      icon.closest('.item').find('.bottom').show()
+    }
+  }
+
+  function handleNameClick() {
+    const item = $(this).closest('.item')
+    item.find('.name').hide()
+    item.find('.edit').show()
+    item.find('.save').show()
+  }
+
+  function handleSaveClick() {
+    const item = $(this).closest('.item')
+    const id = item.data('id')
+    const name = item.find('.edit').val() || 'Undefined'
+    item.find('.name').show()
+    item.find('.edit').hide()
+    item.find('.save').hide()
+    item.find('.name').text(name)
+    item.find('.edit').val(name)
+    Homey.emit('capability:update', { id, name })
+  }
+
+  function handleLearnButton() {
+    const id = $(this).closest('.item').data('id')
+    Homey.emit('capability:current', { id }, () => {
+      Homey.showView('learn')
+    })
+  }
+
+  function handleTestButton() {
+    const item = $(this).closest('.item')
+    const value = item.find('.command').val()
+    if (value) {
+      Homey.emit('test', { hex: value })
+    }
+  }
+
+  function handleAddButton() {
+    Homey.emit('capability:add', {}, (err, data) => {
+      const element = createCapability(data.capability)
+      const container = $('#capability_list')
+      container.append(element)
+    })
+  }
+
+  function handleRemoveButton() {
+    if ($('.capabilities .item').length > 1) {
+      const id = $(this).closest('.item').data('id')
+      Homey.emit('capability:remove', { id }, (err, data) => {
+        $(this).closest('.item').remove()
+      })
+    }
+  }
+
+  function handleBackButton() {
+    Homey.showView('devices')
+  }
+
+  function handleDoneButton() {
+    if ($('.capabilities .status:not(.ok)').length) {
+      Homey.alert('Please add a command to all capabilities, or remove unnecessary capabilities.');
+      return
+    }
+    Homey.emit('done', {}, (err, device) => {
+      Homey.addDevice(device, () => Homey.done())
+    })
+  }
+  
+  function createCapability(item) {
+    const template = $('#capability_item')
+    const content = template.contents().clone()
+    content.data('id', item.id)
+    content.find('.name').text(item.name)
+    content.find('.edit').val(item.name)
+    content.find('.command').val(item.command)
+    if (item.command) {
+      content.find('.status').addClass('ok')
+    }
+    return content
+  }
+
+  function renderCapabilities(items) {
+    const elements = items.map(createCapability)
+    const container = $('#capability_list')
+    container.append(elements)
+  }
+
+  function getDeviceIcon(type) {
+    switch(type) {
+      case 'RM Mini':
+        return 'icons/rm_mini.jpg'
+      default:
+        return 'icons/rm_pro.jpg'
+    }
+  }
+</script>
+
+<style>
+  .template {
+    display: none;
+  }
+
+  .capabilities {
+    position: relative;
+    margin: auto;
+    border: 1px solid #eee;
+    border-radius: 3px;
+  }
+
+  .capabilities .item {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+  }
+
+  .capabilities .item .section {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .capabilities .item .section.head {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .capabilities .item .section.bottom {
+    display: none;
+    margin-top: 5px;
+    margin-left: 15px;
+  }
+
+  .capabilities .item:nth-child(2n-1) {
+    background: #f9f9f9;
+  }
+
+  .capabilities .item input[type="text"] {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+
+  .capabilities .item .collapse {
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .capabilities .item .collapse.open {
+    transform: rotate(90deg);
+  }
+
+  .capabilities .item .status {
+    display: none;
+    margin-left: 10px;
+  }
+
+  .capabilities .item .status.ok {
+    display: inline-block;
+  }
+
+  .capabilities .item .name {
+    width: 100%;
+    cursor: text;
+  }
+
+  .capabilities .item .edit {
+    display: none;
+    width: 100%;
+  }
+
+  .capabilities .item .command {
+    width: 100%;
+  }
+  
+  .capabilities .item button.save,
+  .capabilities .item button.test,
+  .capabilities .item button.learn,
+  .capabilities .item button.remove {
+    margin-left: 10px;
+  }
+
+  .capabilities .item button.save {
+    display: none;
+  }
+
+  .title {
+    margin-bottom: 10px;
+  }
+
+  .add_button {
+    position: absolute;
+    right: 0;
+    margin-right: 6px;
+    margin-top: 6px;
+    width: 87px;
+  }
+
+  .nav_button {
+    position: absolute;
+    bottom: 0;
+  }
+
+  .nav_button.left {
+    left: 0;
+  }
+
+  .nav_button.right {
+    right: 0;
+  }
+</style>
+
+<div id="capability_item" class="template">
+  <div class="item">
+    <div class="section head">
+      <i class="collapse fa fa-angle-right" aria-hidden="true"></i>
+      <span class="name">name</span>
+      <input class="edit" type="text">
+      <button class="save">Save</button>
+      <i class="status fa fa-check-circle" aria-hidden="true"></i>
+      <button class="test">Test</button>
+      <button class="learn">Learn</button>
+    </div>
+    <div class="section bottom">
+      <input class="command" type="text" placeholder="Paste own code or use learn mode">
+    </div>
+  </div>
+</div>
+
+<h2 class="title">Specify required command codes</h2>
+
+<div id="capability_list" class="capabilities"></div>
+
+<button class="nav_button left back">
+  <span data-i18n="buttons.back"></span>
+</button>
+
+<button class="nav_button right done">
+  <span data-i18n="buttons.done"></span>
+</button>
